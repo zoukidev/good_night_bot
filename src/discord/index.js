@@ -1,50 +1,34 @@
 const config = require('config');
 const cron = require('node-cron');
 const Discord = require('discord.js');
-const phrases = require('phrases');
 const {_, getRandomPhrase} = require('message');
 
 const start = () => {
     const client = new Discord.Client();
 
     client.on('ready', () => {
-        console.log(`Logged in as ${client.user.tag}!`);
-
-        // Get online member in selected channel in .env
-        client.channels.fetch(config.get('DISCORD_CHANNEL_ID'))
-        .then((channel) => {
-            channel.members
-            .map(member => {
-                console.log(member.displayName, {
-                    status: member.presence.status,
-                    activities: member.presence.activities,
-                    clientStatus: member.presence.clientStatus
-                })
-            })
-        })
+        if (config.get('DEBUG')) {
+            console.log(`Logged in as ${client.user.tag}!`);
+        }
     });
 
-    // client.on('message', msg => {
-    //     if (msg.channel.id === config.get('DISCORD_CHANNEL_ID')) {
-    //         console.log(msg.author.username + ': ' + msg.content, 'in channel: ' + msg.channel.name + ' | ' + msg.channel.id);
-            
-    //         setTimeout(() => {
-    //             msg.delete();
-    //         }, 2 * 1000);
-    //     }
-    // });
+    client.on('message', msg => {
+        if (msg.channel.id === config.get('DISCORD_CHANNEL_ID')) {
+            if ((msg.content).substr(0, 2) == 'bn' || (msg.content).substr(0, 10) == 'bonne nuit') {
+                msg.reply(_(getRandomPhrase().phrase))
+                    .then(() => console.log(`Sent a reply to ${msg.author.username}`))
+                    .catch(console.error);
+            }
 
-    // Send message to selected channel
-    // cron.schedule('* * * * *', () => {
-    //     client.channels.fetch(config.get('DISCORD_CHANNEL_ID'))
-    //         .then((channel) => {
-    //             console.log(channel.send(phrases[0].phrase))
-    //         })
-    // });
+            setTimeout(() => {
+                msg.delete();
+            }, 2 * 1000);
 
-    // Get random phrase and change params from phrase
-    // console.log('phrase:', getRandomPhrase())
-    // console.log(_(getRandomPhrase().phrase, {username: 'Zoukilama'}))
+            if (config.get('DEBUG')) {
+                console.log(msg.author.username + ': ' + msg.content, 'in channel: ' + msg.channel.name + ' | ' + msg.channel.id);
+            }
+        }
+    });
 
     client.login(config.get('DISCORD_TOKEN'));
 }

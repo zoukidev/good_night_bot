@@ -1,4 +1,4 @@
-const phrases = require('phrases');
+const messages = require('messages');
 
 const _ = (phrase, placeholders) => {
     return phrase.replace(/:(\w+):/g, function(__, item) {
@@ -7,7 +7,7 @@ const _ = (phrase, placeholders) => {
 }
 
 const getRandomPhrase = () => {
-    return phrases[getRandomInt(0, phrases.length)];
+    return messages[getRandomInt(0, messages.length)];
 }
 
 function getRandomInt(min, max) {

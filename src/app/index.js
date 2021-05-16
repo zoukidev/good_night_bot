@@ -1,6 +1,6 @@
 const discord = require('discord');
 
-const start = async () => {
+const start = () => {
     discord.start();
 }
 
